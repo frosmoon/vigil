@@ -1,0 +1,35 @@
+tz: Europe/Rome
+regions: [us-east-1]
+poll_sec: 30
+grace_min: 10          # +/- around a planned restart counts as expected
+max_down_min: 15       # an expected downtime longer than this still alerts
+maintenance_days: [lun]   # no "unexpected down" alerts on these days
+
+machines:              # key = EC2 "Name" tag
+  main-vm:
+    display_name: Main VM
+    description: Primary production host
+    environment: production
+    owner: platform
+    criticality: critical
+    cost_center: infrastructure
+    notes: Monitored production workload
+    restarts: ["16:30"]
+    tcp_checks:
+      - name: SSH
+        host: auto
+        port: 22
+        required: true
+    alerts:
+      enabled: true
+      notify_on_down: true
+      notify_on_recovery: true
+
+email:
+  host: smtp.example.com
+  port: 587
+  user: you@example.com
+  from: fleet@example.com
+  to: you@example.com    # password comes from env SMTP_PASS
+
+webhooks: []             # optional, ntfy-style POST, e.g. https://ntfy.example/alerts
